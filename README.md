@@ -41,3 +41,16 @@ Refatoração SOLID:
   Comportamento Previsível:
     As validações de resposta foram protegidas contra entradas nulas ou vazias,
     garantindo que o fluxo da prova nunca seja interrompido abruptamente por uma falha de lógica interna da questão.
+
+4.Princípio da Segregação de Interface (ISP)
+
+  Criação da Interface Exibivel:
+    Isolamos o comportamento de renderização em tela. Agora, qualquer objeto
+    (como um cabeçalho de prova ou aviso) pode ser exibido sem precisar ser uma questão avaliável.
+
+  Refatoração da Interface Questao:
+    Ela agora estende Exibivel, mantendo apenas os métodos de identificação e validação de resposta.
+
+  Redução de Dependências:
+    Classes que precisam apenas mostrar informações agora podem depender apenas de Exibivel,
+    enquanto o motor de notas depende de Questao.
