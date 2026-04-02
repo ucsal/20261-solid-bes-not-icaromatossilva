@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-import br.com.ucsal.olimpiadas.repository.ParticipanteRepository;
+import br.com.ucsal.olimpiadas.repository.*;
 import br.com.ucsal.olimpiadas.service.ParticipanteService;
 import br.com.ucsal.olimpiadas.model.*;
 
@@ -17,7 +17,7 @@ public class App {
 
 	static final List<Participante> participantes = new ArrayList<>();
 	static final List<Prova> provas = new ArrayList<>();
-	static final List<Questao> questoes = new ArrayList<>();
+	static QuestaoRepository questaoRepo = new MemoriaQuestaoRepository();
 	static final List<Tentativa> tentativas = new ArrayList<>();
 	static ParticipanteRepository participanteRepo = new ParticipanteRepository();
 	static ParticipanteService participanteService = new ParticipanteService(participanteRepo);
@@ -118,8 +118,8 @@ public class App {
 	    
 	    q.setId(proximaQuestaoId++);
 	    q.setProvaId(provaId);
-
-	    questoes.add(q);
+	    
+	    questaoRepo.salvar(q);
 
 	    System.out.println("Questão cadastrada: " + q.getId() + " (na prova " + provaId + ")");
 	}
@@ -143,7 +143,7 @@ public class App {
 		if (provaId == null)
 			return;
 
-		var questoesDaProva = questoes.stream().filter(q -> q.getProvaId() == provaId).toList();
+		var questoesDaProva = questaoRepo.buscarPorProva(provaId);
 
 		if (questoesDaProva.isEmpty()) {
 			System.out.println("esta prova não possui questões cadastradas");
@@ -288,6 +288,6 @@ public class App {
 	    q1.setId(proximaQuestaoId++);
 	    q1.setProvaId(prova.getId());
 
-	    questoes.add(q1);
+	    questaoRepo.salvar(q1);
 	}
 }
