@@ -27,3 +27,17 @@ Refatoração SOLID:
   Polimorfismo na App:
     O método aplicarProva() foi simplificado. Ele agora percorre uma lista de interfaces Questao e chama os métodos do contrato.
     A App não precisa mais saber se está lidando com um tabuleiro de xadrez ou com letras, ela apenas "manda a questão se exibir".
+
+3.Princípio da Substituição de Liskov (LSP)
+  
+  Consistência de Contrato:
+    Todas as classes que implementam Questao (QuestaoMultiplaEscolha, QuestaoXadrez) honram os métodos da interface.
+    Nenhuma delas lança exceções inesperadas (como UnsupportedOperationException) nos métodos principais.
+
+  Substituibilidade:
+    Na classe App, o método aplicarProva trata todos os objetos do tipo Questao de forma uniforme.
+    Não existem blocos if (q instanceof QuestaoXadrez), o que prova que a abstração é robusta.
+
+  Comportamento Previsível:
+    As validações de resposta foram protegidas contra entradas nulas ou vazias,
+    garantindo que o fluxo da prova nunca seja interrompido abruptamente por uma falha de lógica interna da questão.
