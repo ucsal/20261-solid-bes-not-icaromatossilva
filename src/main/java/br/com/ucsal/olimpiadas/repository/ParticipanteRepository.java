@@ -14,7 +14,7 @@ public class ParticipanteRepository {
     }
 
     public List<Participante> listarTodos() {
-        return new ArrayList<>(participantes); // Retorna cópia por segurança
+        return new ArrayList<>(participantes);
     }
 
     public Participante buscarPorId(long id) {

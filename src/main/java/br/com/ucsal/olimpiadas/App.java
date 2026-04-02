@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-import br.com.ucsal.olimpiadas.repository.ParticipanteRepository; // ADICIONE ESTA LINHA
+import br.com.ucsal.olimpiadas.repository.ParticipanteRepository;
 import br.com.ucsal.olimpiadas.service.ParticipanteService;
 
 public class App {
