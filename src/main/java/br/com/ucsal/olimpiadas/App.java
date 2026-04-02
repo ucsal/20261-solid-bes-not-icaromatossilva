@@ -6,6 +6,7 @@ import java.util.Scanner;
 
 import br.com.ucsal.olimpiadas.repository.ParticipanteRepository;
 import br.com.ucsal.olimpiadas.service.ParticipanteService;
+import br.com.ucsal.olimpiadas.model.*;
 
 public class App {
 
@@ -83,44 +84,44 @@ public class App {
 	}
 
 	static void cadastrarQuestao() {
-		if (provas.isEmpty()) {
-			System.out.println("não há provas cadastradas");
-			return;
-		}
+	    if (provas.isEmpty()) {
+	        System.out.println("não há provas cadastradas");
+	        return;
+	    }
 
-		var provaId = escolherProva();
-		if (provaId == null)
-			return;
+	    var provaId = escolherProva();
+	    if (provaId == null)
+	        return;
 
-		System.out.println("Enunciado:");
-		var enunciado = in.nextLine();
+	    System.out.println("Enunciado:");
+	    var enunciado = in.nextLine();
 
-		var alternativas = new String[5];
-		for (int i = 0; i < 5; i++) {
-			char letra = (char) ('A' + i);
-			System.out.print("Alternativa " + letra + ": ");
-			alternativas[i] = letra + ") " + in.nextLine();
-		}
+	    var alternativas = new String[5];
+	    for (int i = 0; i < 5; i++) {
+	        char letra = (char) ('A' + i);
+	        System.out.print("Alternativa " + letra + ": ");
+	        alternativas[i] = letra + ") " + in.nextLine();
+	    }
 
-		System.out.print("Alternativa correta (A–E): ");
-		char correta;
-		try {
-			correta = Questao.normalizar(in.nextLine().trim().charAt(0));
-		} catch (Exception e) {
-			System.out.println("alternativa inválida");
-			return;
-		}
+	    System.out.print("Alternativa correta (A–E): ");
+	    char correta;
+	    try {
+	        String entrada = in.nextLine().trim().toUpperCase();
+	        if (entrada.isEmpty()) throw new Exception();
+	        correta = entrada.charAt(0);
+	    } catch (Exception e) {
+	        System.out.println("alternativa inválida");
+	        return;
+	    }
 
-		var q = new Questao();
-		q.setId(proximaQuestaoId++);
-		q.setProvaId(provaId);
-		q.setEnunciado(enunciado);
-		q.setAlternativas(alternativas);
-		q.setAlternativaCorreta(correta);
+	    Questao q = new QuestaoMultiplaEscolha(enunciado, alternativas, correta);
+	    
+	    q.setId(proximaQuestaoId++);
+	    q.setProvaId(provaId);
 
-		questoes.add(q);
+	    questoes.add(q);
 
-		System.out.println("Questão cadastrada: " + q.getId() + " (na prova " + provaId + ")");
+	    System.out.println("Questão cadastrada: " + q.getId() + " (na prova " + provaId + ")");
 	}
 
 
@@ -156,32 +157,20 @@ public class App {
 
 		System.out.println("\n--- Início da Prova ---");
 
-		for (var q : questoesDaProva) {
-			System.out.println("\nQuestão #" + q.getId());
-			System.out.println(q.getEnunciado());
+		for (Questao q : questoesDaProva) {
+		    // A mágica do OCP: Não importa o tipo, o método é o mesmo
+		    q.exibir(); 
 
-			System.out.println("Posição inicial:");
-			imprimirTabuleiroFen(q.getFenInicial());
+		    System.out.print("Sua resposta: ");
+		    String marcada = in.nextLine();
 
-			for (var alt : q.getAlternativas()) {
-			    System.out.println(alt);
-			}
+		    var r = new Resposta();
+		    r.setQuestaoId(q.getId());
+		    // A própria questão diz se a resposta está correta ou não
+		    boolean acertou = q.verificarResposta(marcada);
+		    r.setCorreta(acertou);
 
-			System.out.print("Sua resposta (A–E): ");
-			char marcada;
-			try {
-				marcada = Questao.normalizar(in.nextLine().trim().charAt(0));
-			} catch (Exception e) {
-				System.out.println("resposta inválida (marcando como errada)");
-				marcada = 'X';
-			}
-
-			var r = new Resposta();
-			r.setQuestaoId(q.getId());
-			r.setAlternativaMarcada(marcada);
-			r.setCorreta(q.isRespostaCorreta(marcada));
-
-			tentativa.getRespostas().add(r);
+		    tentativa.getRespostas().add(r);
 		}
 
 		tentativas.add(tentativa);
@@ -287,28 +276,20 @@ public class App {
 
 
 	static void seed() {
+	    var prova = new Prova();
+	    prova.setId(proximaProvaId++);
+	    prova.setTitulo("Olimpíada 2026 - Xadrez");
+	    provas.add(prova);
 
-		var prova = new Prova();
-		prova.setId(proximaProvaId++);
-		prova.setTitulo("Olimpíada 2026 • Nível 1 • Prova A");
-		provas.add(prova);
+	    // Criando uma questão usando o OCP
+	    Questao q1 = new QuestaoXadrez(
+	        "Mate em 1. Brancas jogam.",
+	        "6k1/5ppp/8/8/8/7Q/6PP/6K1 w - - 0 1",
+	        "Qc8"
+	    );
+	    q1.setId(proximaQuestaoId++);
+	    q1.setProvaId(prova.getId());
 
-		var q1 = new Questao();
-		q1.setId(proximaQuestaoId++);
-		q1.setProvaId(prova.getId());
-
-		q1.setEnunciado("""
-				Questão 1 — Mate em 1.
-				É a vez das brancas.
-				Encontre o lance que dá mate imediatamente.
-				""");
-
-		q1.setFenInicial("6k1/5ppp/8/8/8/7Q/6PP/6K1 w - - 0 1");
-
-		q1.setAlternativas(new String[] { "A) Qh7#", "B) Qf5#", "C) Qc8#", "D) Qh8#", "E) Qe6#" });
-
-		q1.setAlternativaCorreta('C');
-
-		questoes.add(q1);
+	    questoes.add(q1);
 	}
 }
