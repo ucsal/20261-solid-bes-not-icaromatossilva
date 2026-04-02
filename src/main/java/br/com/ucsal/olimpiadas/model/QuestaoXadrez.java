@@ -22,6 +22,9 @@ public class QuestaoXadrez implements Questao {
 
     @Override
     public boolean verificarResposta(String resposta) {
+        if (resposta == null || resposta.trim().isEmpty()) {
+            return false; 
+        }
         return movimentoCorreto.equalsIgnoreCase(resposta.trim());
     }
 
