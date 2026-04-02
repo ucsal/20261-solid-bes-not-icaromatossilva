@@ -54,3 +54,16 @@ Refatoração SOLID:
   Redução de Dependências:
     Classes que precisam apenas mostrar informações agora podem depender apenas de Exibivel,
     enquanto o motor de notas depende de Questao.
+    
+5.Princípio da Inversão de Dependência (DIP)
+  Alterações Realizadas:
+  
+  Interface de Repositório:
+    Criei a QuestaoRepository para definir como as questões devem ser salvas e recuperadas.
+      
+  Desacoplamento da App:
+    Removi a List<Questao> estática que era manipulada diretamente dentro dos métodos da App. Agora, a classe principal interage apenas com a interface do repositório.
+  
+  Implementação em Memória:
+    Criei a MemoriaQuestaoRepository, que encapsula a lista de questões. Se no futuro desejar usar um Banco de Dados (SQL) ou arquivos (JSON),
+    basta criar uma nova implementação da interface sem tocar no código da App.
