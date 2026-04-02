@@ -158,7 +158,6 @@ public class App {
 		System.out.println("\n--- Início da Prova ---");
 
 		for (Questao q : questoesDaProva) {
-		    // A mágica do OCP: Não importa o tipo, o método é o mesmo
 		    q.exibir(); 
 
 		    System.out.print("Sua resposta: ");
@@ -166,7 +165,7 @@ public class App {
 
 		    var r = new Resposta();
 		    r.setQuestaoId(q.getId());
-		    // A própria questão diz se a resposta está correta ou não
+		    
 		    boolean acertou = q.verificarResposta(marcada);
 		    r.setCorreta(acertou);
 
@@ -281,7 +280,6 @@ public class App {
 	    prova.setTitulo("Olimpíada 2026 - Xadrez");
 	    provas.add(prova);
 
-	    // Criando uma questão usando o OCP
 	    Questao q1 = new QuestaoXadrez(
 	        "Mate em 1. Brancas jogam.",
 	        "6k1/5ppp/8/8/8/7Q/6PP/6K1 w - - 0 1",
