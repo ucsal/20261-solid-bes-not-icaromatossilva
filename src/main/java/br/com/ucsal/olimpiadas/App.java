@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+import br.com.ucsal.olimpiadas.repository.ParticipanteRepository; // ADICIONE ESTA LINHA
+import br.com.ucsal.olimpiadas.service.ParticipanteService;
+
 public class App {
 
 	static long proximoParticipanteId = 1;
@@ -15,6 +18,8 @@ public class App {
 	static final List<Prova> provas = new ArrayList<>();
 	static final List<Questao> questoes = new ArrayList<>();
 	static final List<Tentativa> tentativas = new ArrayList<>();
+	static ParticipanteRepository participanteRepo = new ParticipanteRepository();
+	static ParticipanteService participanteService = new ParticipanteService(participanteRepo);
 
 	private static final Scanner in = new Scanner(System.in);
 
@@ -47,24 +52,17 @@ public class App {
 	}
 
 	static void cadastrarParticipante() {
-		System.out.print("Nome: ");
-		var nome = in.nextLine();
+	    System.out.print("Nome: ");
+	    var nome = in.nextLine();
+	    System.out.print("Email (opcional): ");
+	    var email = in.nextLine();
 
-		System.out.print("Email (opcional): ");
-		var email = in.nextLine();
-
-		if (nome == null || nome.isBlank()) {
-			System.out.println("nome inválido");
-			return;
-		}
-
-		var p = new Participante();
-		p.setId(proximoParticipanteId++);
-		p.setNome(nome);
-		p.setEmail(email);
-
-		participantes.add(p);
-		System.out.println("Participante cadastrado: " + p.getId());
+	    try {
+	        participanteService.registrarParticipante(nome, email);
+	        System.out.println("Participante cadastrado com sucesso!");
+	    } catch (IllegalArgumentException e) {
+	        System.out.println("Erro: " + e.getMessage());
+	    }
 	}
 
 	static void cadastrarProva() {
